@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+:root {
+  --studio-bg: #0c0b12;
+  --studio-bg-elevated: #14121f;
+  --studio-surface: #1a1728;
+  --studio-border: rgba(167, 139, 250, 0.22);
+  --studio-border-strong: rgba(45, 212, 191, 0.35);
+  --studio-text: #f4f2ff;
+  --studio-muted: #9b94b8;
+  --studio-accent: #2dd4bf;
+  --studio-accent-2: #a78bfa;
+  --studio-glow: rgba(45, 212, 191, 0.15);
+  --studio-viewport: linear-gradient(165deg, #1e1b2e 0%, #12101c 45%, #0f1419 100%);
+}
+
+@theme inline {
+  --color-studio-bg: var(--studio-bg);
+  --color-studio-elevated: var(--studio-bg-elevated);
+  --color-studio-surface: var(--studio-surface);
+  --color-studio-border: var(--studio-border);
+  --color-studio-text: var(--studio-text);
+  --color-studio-muted: var(--studio-muted);
+  --color-studio-accent: var(--studio-accent);
+  --color-studio-accent-2: var(--studio-accent-2);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+}
+
+@keyframes studio-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes studio-shimmer {
+  0% {
+    opacity: 0.35;
+    transform: translateX(-30%);
+  }
+  50% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0.35;
+    transform: translateX(30%);
+  }
+}
+
+@keyframes studio-grid-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+body {
+  background-color: var(--studio-bg);
+  color: var(--studio-text);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+.studio-page-bg {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(167, 139, 250, 0.18), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(45, 212, 191, 0.12), transparent),
+    radial-gradient(ellipse 50% 30% at 0% 100%, rgba(99, 102, 241, 0.1), transparent),
+    var(--studio-bg);
+}
+
+.studio-card {
+  background: linear-gradient(145deg, rgba(26, 23, 40, 0.95), rgba(15, 14, 22, 0.98));
+  border: 1px solid var(--studio-border);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 20px 50px -20px rgba(0, 0, 0, 0.65);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.studio-card:hover {
+  border-color: var(--studio-border-strong);
+  box-shadow:
+    0 0 0 1px rgba(45, 212, 191, 0.12) inset,
+    0 0 40px -10px var(--studio-glow),
+    0 24px 56px -22px rgba(0, 0, 0, 0.75);
+  transform: translateY(-2px);
+}
+
+.studio-viewport {
+  position: relative;
+  overflow: hidden;
+  background: var(--studio-viewport);
+}
+
+.studio-viewport::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(167, 139, 250, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167, 139, 250, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 55%, black, transparent);
+  animation: studio-grid-pulse 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.studio-viewport::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45%;
+  background: linear-gradient(to top, rgba(12, 11, 18, 0.85), transparent);
+  pointer-events: none;
+}
+
+.studio-viewport-shine {
+  position: absolute;
+  inset: -50% 0 auto 0;
+  height: 80%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 60%
+  );
+  animation: studio-shimmer 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.studio-showcase-float {
+  animation: studio-float 5.5s ease-in-out infinite;
+}
+
+.studio-btn-primary {
+  background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+  color: #042f2e;
+  font-weight: 600;
+  box-shadow: 0 0 24px -4px rgba(45, 212, 191, 0.45);
+}
+
+.studio-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.studio-btn-ghost {
+  border: 1px solid var(--studio-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--studio-text);
+}
+
+.studio-btn-ghost:hover {
+  border-color: var(--studio-border-strong);
+  background: rgba(45, 212, 191, 0.08);
+}
+
+.studio-input {
+  border: 1px solid var(--studio-border);
+  background: rgba(12, 11, 18, 0.6);
+  color: var(--studio-text);
+}
+
+.studio-input:focus {
+  outline: none;
+  border-color: var(--studio-accent);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
+}
+
+.studio-badge {
+  border: 1px solid var(--studio-border);
+  background: rgba(12, 11, 18, 0.55);
+  backdrop-filter: blur(8px);
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-body), system-ui, sans-serif;
+}

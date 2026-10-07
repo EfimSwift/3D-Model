@@ -1,0 +1,17 @@
+# Edge reverse proxy. Rate limit: Cloudflare + Redis в приложении.
+# На проде замените :80 на ваш домен и включите TLS (Caddy auto HTTPS).
+
+:80 {
+	@download path /api/download/*
+	handle @download {
+		reverse_proxy app:3000 {
+			transport http {
+				read_timeout 120s
+				write_timeout 120s
+			}
+		}
+	}
+	handle {
+		reverse_proxy app:3000
+	}
+}

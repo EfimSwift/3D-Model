@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductType {
+  DIGITAL
+  PHYSICAL
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  orders       Order[]
+}
+
+model Product {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  title           String
+  description     String
+  priceUah        Int
+  type            ProductType
+  previewGlbPath  String?
+  coverImagePath  String?
+  privateFilePath String?
+  createdAt       DateTime    @default(now())
+  orderItems      OrderItem[]
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  customerEmail     String
+  userId            String?
+  user              User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  status            OrderStatus @default(PENDING)
+  paymentProvider   String?
+  paymentExternalId String?     @unique
+  paidAt            DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  items             OrderItem[]
+
+  @@index([customerEmail, status])
+  @@index([userId, status])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  priceUah  Int
+
+  @@unique([orderId, productId])
+}
+
+model DownloadGrant {
+  id        String    @id
+  orderId   String
+  productId String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([orderId, productId])
+}

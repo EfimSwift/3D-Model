@@ -1,0 +1,51 @@
+# Локальный/стейджинг стек: proxy + app + redis (разделение контуров).
+# Продакшен: Cloudflare перед этим стеком + managed Postgres + R2.
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks: [internal]
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
+    volumes:
+      - model-storage:/app/storage/private
+      - app-db:/app/prisma
+    depends_on:
+      - redis
+    networks: [internal]
+    # Не публикуем порт наружу — только через caddy
+    expose:
+      - "3000"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - app
+    networks: [internal, public]
+
+networks:
+  internal:
+    internal: false
+  public:
+
+volumes:
+  redis-data:
+  model-storage:
+  app-db:
