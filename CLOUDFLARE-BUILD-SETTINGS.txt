@@ -1,11 +1,13 @@
-Cloudflare → Worker → Settings → Build
+ОШИБКА "Could not find compiled Open Next config" = в Build стоит npm run build.
 
-Node.js version: 22
+Cloudflare → Worker → Settings → Builds:
 
-Build command (можно ОЧИСТИТЬ / оставить пустым):
-  (сборка идёт внутри wrangler deploy через wrangler.jsonc → build.command)
+Node.js: 22
+
+Build command:
+  (ПУСТО — удалите npm run build полностью)
 
 Deploy command:
-  npx wrangler deploy --env=""
+  npm run cf:workers-ci
 
-Сохранить → Retry deployment
+Save → Retry deployment

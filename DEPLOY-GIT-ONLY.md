@@ -9,11 +9,12 @@ D1, сид, секреты и `wrangler.jsonc` уже настроены.
 1. https://dash.cloudflare.com → **Workers & Pages** → **Create** → **Worker** → **Connect Git**
 2. Репозиторий: **EfimSwift/3D-Model**, ветка **main**
 3. **Node.js:** **22** (Wrangler 4 требует ≥22)
-4. **Build command:** оставь **пустым** (сборка OpenNext в `wrangler.jsonc` → `build.command`)
+4. **Build command:** **пусто** (удали `npm run build` — иначе OpenNext не собирается)
 5. **Deploy command:**
    ```
-   npx wrangler deploy --env=""
+   npm run cf:workers-ci
    ```
+   (одна команда: OpenNext build + deploy)
 6. **Retry deployment**
 
 Альтернатива (если пустой build нельзя):

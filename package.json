@@ -22,6 +22,7 @@
     "cf:build": "opennextjs-cloudflare build",
     "cf:preview": "npm run cf:check && npm run cf:build && opennextjs-cloudflare preview",
     "cf:deploy": "npm run cf:check && npm run cf:build && opennextjs-cloudflare deploy",
+    "cf:workers-ci": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env=\"\"",
     "cf:upload": "npm run cf:build && opennextjs-cloudflare upload",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
