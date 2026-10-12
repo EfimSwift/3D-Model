@@ -1,7 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { PayoneerCheckoutEmbed } from "@/components/PayoneerCheckoutEmbed";
+
+type Provider = { id: string; label: string };
+type CurrencyOption = {
+  code: string;
+  label: string;
+  amountMinor: number;
+  formatted: string | null;
+};
 
 type Props = {
   productId: string;
@@ -9,6 +18,7 @@ type Props = {
   isDigital: boolean;
   testPaymentEnabled: boolean;
   priceLabel: string;
+  priceUah: number;
   title: string;
 };
 
@@ -18,6 +28,7 @@ export function CheckoutPayment({
   isDigital,
   testPaymentEnabled,
   priceLabel,
+  priceUah,
   title,
 }: Props) {
   const router = useRouter();
@@ -27,9 +38,33 @@ export function CheckoutPayment({
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "checking" | "paid">("idle");
 
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [currencies, setCurrencies] = useState<CurrencyOption[]>([]);
+  const [currency, setCurrency] = useState("UAH");
+  const [provider, setProvider] = useState<string>("stripe");
+  const [payoneerEmbed, setPayoneerEmbed] = useState<{
+    longId: string;
+    env: "test" | "live";
+  } | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/payments/options?priceUah=${priceUah}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setProviders(data.providers ?? []);
+        setCurrencies(data.currencies ?? []);
+        if (data.providers?.[0]?.id) setProvider(data.providers[0].id);
+      })
+      .catch(() => {});
+  }, [priceUah]);
+
+  const selectedFormatted =
+    currencies.find((c) => c.code === currency)?.formatted ?? priceLabel;
+
   async function createOrder() {
     setLoading(true);
     setError(null);
+    setPayoneerEmbed(null);
     try {
       const res = await fetch("/api/orders", {
         method: "POST",
@@ -48,6 +83,39 @@ export function CheckoutPayment({
       setLoading(false);
     }
   }
+
+  const startCheckout = useCallback(async () => {
+    if (!orderId) return;
+    if (provider === "test") return;
+    setLoading(true);
+    setError(null);
+    setPayoneerEmbed(null);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/checkout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ provider, currency }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Не удалось начать оплату");
+        return;
+      }
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+        return;
+      }
+      if (data.embedded && data.longId) {
+        setPayoneerEmbed({ longId: data.longId, env: data.env ?? "test" });
+        return;
+      }
+      setError("Платёжный шлюз не вернул ссылку");
+    } catch {
+      setError("Ошибка сети");
+    } finally {
+      setLoading(false);
+    }
+  }, [orderId, provider, currency]);
 
   async function confirmTestPayment() {
     if (!orderId) return;
@@ -73,12 +141,16 @@ export function CheckoutPayment({
     }
   }
 
+  const cardProviders = providers.filter((p) => p.id === "stripe" || p.id === "payoneer");
+  const showRealPay = cardProviders.length > 0 && orderId;
+
   return (
     <div className="space-y-6">
       <div className="studio-card rounded-2xl p-6">
         <h2 className="font-display text-lg font-semibold">Оплата</h2>
         <p className="mt-1 text-sm text-studio-muted">{title}</p>
-        <p className="mt-4 text-3xl font-semibold text-studio-accent">{priceLabel}</p>
+        <p className="mt-4 text-3xl font-semibold text-studio-accent">{selectedFormatted}</p>
+        <p className="mt-1 text-xs text-studio-muted">Базовая цена: {priceLabel}</p>
 
         <label className="mt-6 flex flex-col gap-1.5 text-sm text-studio-muted">
           Email для чека и ссылки на покупку
@@ -92,9 +164,48 @@ export function CheckoutPayment({
             disabled={Boolean(orderId)}
           />
         </label>
+
+        {orderId && cardProviders.length > 0 && (
+          <>
+            <label className="mt-4 flex flex-col gap-1.5 text-sm text-studio-muted">
+              Валюта оплаты
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="studio-input rounded-xl px-3 py-2.5"
+              >
+                {currencies.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.label}
+                    {c.formatted ? ` — ${c.formatted}` : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <p className="mt-4 text-sm font-medium text-studio-text">Способ оплаты</p>
+            <div className="mt-2 flex flex-col gap-2">
+              {cardProviders.map((p) => (
+                <label
+                  key={p.id}
+                  className="flex cursor-pointer items-center gap-3 rounded-xl border border-studio-border px-3 py-2.5"
+                >
+                  <input
+                    type="radio"
+                    name="pay-provider"
+                    value={p.id}
+                    checked={provider === p.id}
+                    onChange={() => setProvider(p.id)}
+                  />
+                  <span className="text-sm">{p.label}</span>
+                </label>
+              ))}
+            </div>
+          </>
+        )}
+
         <p className="mt-2 text-xs text-studio-muted">
-          После оплаты отправим письмо с подтверждением
-          {isDigital ? " и ссылкой на скачивание модели" : " и статусом заказа на фигурку"}.
+          Карта вводится только на стороне Stripe или Payoneer — мы не храним данные карты.
         </p>
 
         {!orderId && (
@@ -111,22 +222,33 @@ export function CheckoutPayment({
         {orderId && (
           <p className="mt-4 text-sm text-studio-accent">Заказ создан. Завершите оплату ниже.</p>
         )}
-
-        <div className="mt-6 space-y-3 opacity-50">
-          <div className="h-11 rounded-xl border border-studio-border bg-studio-bg/50" />
-          <div className="grid grid-cols-2 gap-3">
-            <div className="h-11 rounded-xl border border-studio-border bg-studio-bg/50" />
-            <div className="h-11 rounded-xl border border-studio-border bg-studio-bg/50" />
-          </div>
-        </div>
       </div>
+
+      {showRealPay && provider !== "test" && (
+        <button
+          type="button"
+          onClick={startCheckout}
+          disabled={loading}
+          className="studio-btn-primary w-full rounded-full py-3 text-sm disabled:opacity-60"
+        >
+          {loading ? "Подключение к платёжному шлюзу…" : "Оплатить картой"}
+        </button>
+      )}
+
+      {payoneerEmbed && (
+        <PayoneerCheckoutEmbed
+          longId={payoneerEmbed.longId}
+          env={payoneerEmbed.env}
+          onError={(msg) => setError(msg)}
+        />
+      )}
 
       {testPaymentEnabled && orderId && (
         <button
           type="button"
           onClick={confirmTestPayment}
           disabled={loading || status === "paid"}
-          className="studio-btn-primary w-full rounded-full py-3 text-sm disabled:opacity-60"
+          className="studio-btn-ghost w-full rounded-full border border-dashed border-studio-border py-3 text-sm disabled:opacity-60"
         >
           {status === "checking"
             ? "Проверяем поступление…"
@@ -136,9 +258,10 @@ export function CheckoutPayment({
         </button>
       )}
 
-      {!testPaymentEnabled && orderId && (
-        <p className="text-center text-sm text-studio-muted">
-          Ожидание платёжного шлюза. Заказ № {orderId}
+      {orderId && cardProviders.length === 0 && !testPaymentEnabled && (
+        <p className="text-center text-sm text-amber-400/90">
+          Платёжные ключи не настроены. Добавьте Stripe или Payoneer в секреты воркера (см.
+          docs/PAYMENTS-SETUP.md).
         </p>
       )}
 

@@ -27,6 +27,7 @@ export default async function CheckoutPage({ params }: Params) {
         isDigital={product.type === "DIGITAL"}
         testPaymentEnabled={testPaymentEnabled}
         priceLabel={formatUahFromDb(product.priceUah)}
+        priceUah={product.priceUah}
         title={product.title}
       />
     </div>
