@@ -1,11 +1,16 @@
 import Link from "next/link";
+import type { ProductType } from "@prisma/client";
 import type { ReactNode } from "react";
+import { ProductPreviewStats } from "@/components/ProductPreviewStats";
+import type { ProductStats } from "@/lib/product-stats";
 
 type Props = {
   href: string;
   children: ReactNode;
   typeLabel: string;
   previewHint?: string;
+  stats?: ProductStats;
+  productType?: ProductType;
 };
 
 export function ProductCardViewport({
@@ -13,6 +18,8 @@ export function ProductCardViewport({
   children,
   typeLabel,
   previewHint = "Открыть",
+  stats,
+  productType,
 }: Props) {
   return (
     <Link href={href} className="group/viewport relative block aspect-square studio-viewport">
@@ -28,6 +35,13 @@ export function ProductCardViewport({
       >
         {previewHint}
       </span>
+      {stats && productType && (
+        <ProductPreviewStats
+          stats={stats}
+          productType={productType}
+          className="absolute bottom-3 right-3 z-[2]"
+        />
+      )}
     </Link>
   );
 }

@@ -3,6 +3,7 @@ import { Outfit, Syne } from "next/font/google";
 import { ModelViewerScript } from "@/components/ModelViewerScript";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { StudioAmbientBackground } from "@/components/StudioAmbientBackground";
 import "./globals.css";
 
 const display = Syne({
@@ -23,11 +24,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="uk" className={`${display.variable} ${body.variable} h-full antialiased`}>
-      <body className="studio-page-bg min-h-full flex flex-col text-studio-text">
-        <ModelViewerScript />
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
+      <body className="relative min-h-full text-studio-text">
+        <StudioAmbientBackground />
+        <div className="relative z-[1] flex min-h-full flex-col">
+          <ModelViewerScript />
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+        </div>
       </body>
     </html>
   );

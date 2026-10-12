@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Product } from "@prisma/client";
+import type { ProductStats } from "@/lib/product-stats";
 import { ModelViewer } from "@/components/ModelViewer";
 import { ProductCardViewport } from "@/components/ProductCardViewport";
 import { ProductShowcaseImage } from "@/components/ProductShowcaseImage";
@@ -8,6 +9,7 @@ import { ProductPayButton } from "@/components/ProductPayButton";
 
 type Props = {
   product: Product;
+  stats?: ProductStats;
 };
 
 function typeMeta(product: Product) {
@@ -17,13 +19,19 @@ function typeMeta(product: Product) {
   return { label: "На заказ", hint: "Смотреть фигурку" };
 }
 
-export function ProductCard({ product }: Props) {
+export function ProductCard({ product, stats }: Props) {
   const { label, hint } = typeMeta(product);
   const productHref = `/products/${product.slug}`;
 
   return (
     <article className="studio-card flex flex-col overflow-hidden rounded-2xl">
-      <ProductCardViewport href={productHref} typeLabel={label} previewHint={hint}>
+      <ProductCardViewport
+        href={productHref}
+        typeLabel={label}
+        previewHint={hint}
+        stats={stats}
+        productType={product.type}
+      >
         {product.previewGlbPath ? (
           <ModelViewer
             src={product.previewGlbPath}

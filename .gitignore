@@ -35,6 +35,15 @@ yarn-error.log*
 # vercel
 .vercel
 
+# cloudflare / opennext
+.open-next
+.wrangler
+cloudflare-env.d.ts
+prisma/cloudflare-schema.sql
+prisma/cloudflare-seed.sql
+prisma/cf-seed-admin.sql
+.dev.vars
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

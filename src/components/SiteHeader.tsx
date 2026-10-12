@@ -5,7 +5,7 @@ export async function SiteHeader() {
   const session = await getSession();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-studio-border/80 bg-studio-bg/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-studio-border/80 bg-[rgba(12,11,18,0.72)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
         <Link href="/" className="group flex items-center gap-2">
           <span

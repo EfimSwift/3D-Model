@@ -68,7 +68,7 @@ export async function GET(request: Request) {
 
   let buffer: Buffer;
   try {
-    buffer = readPrivateModelFile(product.privateFilePath);
+    buffer = await readPrivateModelFile(product.privateFilePath);
   } catch {
     return NextResponse.json({ error: "Файл не найден" }, { status: 404 });
   }

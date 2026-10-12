@@ -1,8 +1,10 @@
 import { ProductCard } from "@/components/ProductCard";
 import { prisma } from "@/lib/db";
+import { getProductStatsMap } from "@/lib/product-stats";
 
 export default async function HomePage() {
   const products = await prisma.product.findMany({ orderBy: { createdAt: "asc" } });
+  const statsMap = await getProductStatsMap(products.map((p) => p.id));
 
   const digital = products.filter((p) => p.type === "DIGITAL");
   const physical = products.filter((p) => p.type === "PHYSICAL");
@@ -29,7 +31,11 @@ export default async function HomePage() {
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {digital.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                stats={statsMap.get(product.id)}
+              />
             ))}
           </div>
         </section>
@@ -45,7 +51,11 @@ export default async function HomePage() {
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {physical.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                stats={statsMap.get(product.id)}
+              />
             ))}
           </div>
         </section>

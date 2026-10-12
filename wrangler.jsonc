@@ -1,0 +1,50 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "figurki-3d-dev",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-04-05",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "figurki-3d-dev",
+    },
+  ],
+  // После: npx wrangler d1 create figurki-3d-dev — подставьте database_id
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "figurki-3d-dev",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MODELS_BUCKET",
+      "bucket_name": "figurki-3d-models-dev",
+    },
+    // Опционально: кэш Next.js (см. open-next.config.ts)
+    // {
+    //   "binding": "NEXT_INC_CACHE_R2_BUCKET",
+    //   "bucket_name": "figurki-3d-next-cache-dev",
+    // },
+  ],
+  "vars": {
+    "NEXT_PUBLIC_APP_URL": "https://figurki-3d-dev.workers.dev",
+    "ENABLE_TEST_PAYMENT": "true",
+    "ALLOW_TEST_PAYMENT_IN_PRODUCTION": "false",
+  },
+  "env": {
+    "preview": {
+      "name": "figurki-3d-dev-preview",
+      "vars": {
+        "NEXT_PUBLIC_APP_URL": "https://figurki-3d-dev-preview.workers.dev",
+        "ENABLE_TEST_PAYMENT": "true",
+      },
+    },
+  },
+}

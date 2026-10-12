@@ -57,8 +57,11 @@ npm run dev
 - **`SECURITY.md`** — модели, шифрование, доступ
 - **`docs/INFRASTRUCTURE.md`** — Docker/K8s, DDoS, разделение сервисов
 - **`docs/PAYMENTS-SECURITY.md`** — оплата, PCI, webhook
+- **`docs/CLOUDFLARE-DEV.md`** — деплой dev/preview на Cloudflare (OpenNext + D1 + R2)
 
 Docker: `docker compose up --build` → сайт на http://localhost:8080
+
+Cloudflare dev: `npm run cf:deploy` (после настройки D1/R2 в `wrangler.jsonc`)
 
 ## Git
 

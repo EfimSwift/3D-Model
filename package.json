@@ -10,12 +10,28 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
-    "db:setup": "prisma db push && prisma db seed"
+    "db:setup": "prisma db push && prisma db seed",
+    "cf:check": "node scripts/cf-check.mjs",
+    "cf:db:schema": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script -o prisma/cloudflare-schema.sql",
+    "cf:db:migrate:local": "wrangler d1 execute figurki-3d-dev --local --file=prisma/cloudflare-schema.sql",
+    "cf:db:migrate:remote": "wrangler d1 execute figurki-3d-dev --remote --file=prisma/cloudflare-schema.sql",
+    "cf:db:seed:remote": "tsx scripts/cf-seed-d1.ts",
+    "cf:models:upload": "node scripts/cf-upload-models.mjs",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:preview": "npm run cf:check && npm run cf:build && opennextjs-cloudflare preview",
+    "cf:deploy": "npm run cf:check && npm run cf:build && opennextjs-cloudflare deploy",
+    "cf:upload": "npm run cf:build && opennextjs-cloudflare upload",
+    "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "^1.6.5",
+    "@prisma/adapter-d1": "6.16.2",
     "@prisma/client": "6.16.2",
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.12",
@@ -25,6 +41,7 @@
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261006.1",
     "@tailwindcss/turbopack": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
@@ -35,6 +52,7 @@
     "prisma": "6.16.2",
     "tailwindcss": "^4",
     "tsx": "^4.20.5",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.36.0"
   }
 }

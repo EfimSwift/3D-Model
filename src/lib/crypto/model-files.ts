@@ -1,6 +1,7 @@
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 import fs from "fs";
 import path from "path";
+import { getCfEnv } from "@/lib/cloudflare/bindings";
 import { resolvePrivateFile } from "@/lib/paths";
 
 const MAGIC = Buffer.from("FIGENC1");
@@ -57,7 +58,18 @@ export function decryptModelBuffer(blob: Buffer): Buffer {
   return Buffer.concat([decipher.update(ciphertext), decipher.final()]);
 }
 
-export function readPrivateModelFile(relativePath: string): Buffer {
+export async function readPrivateModelFile(relativePath: string): Promise<Buffer> {
+  const key = relativePath.replace(/^[/\\]+/, "");
+  const bucket = getCfEnv()?.MODELS_BUCKET;
+  if (bucket) {
+    const obj = await bucket.get(key);
+    if (!obj) {
+      throw new Error("FILE_NOT_FOUND");
+    }
+    const stored = Buffer.from(await obj.arrayBuffer());
+    return decryptModelBuffer(stored);
+  }
+
   const fullPath = resolvePrivateFile(relativePath);
   if (!fs.existsSync(fullPath)) {
     throw new Error("FILE_NOT_FOUND");

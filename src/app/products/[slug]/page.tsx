@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { ModelViewer } from "@/components/ModelViewer";
 import { ProductPayButton } from "@/components/ProductPayButton";
 import { ProductShowcaseImage } from "@/components/ProductShowcaseImage";
+import { ProductPreviewStats } from "@/components/ProductPreviewStats";
 import { prisma } from "@/lib/db";
 import { formatUahFromDb } from "@/lib/format";
+import { getProductStats } from "@/lib/product-stats";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -13,6 +15,7 @@ export default async function ProductPage({ params }: Params) {
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product) notFound();
 
+  const stats = await getProductStats(product.id);
   const isDigital = product.type === "DIGITAL";
   const typeLabel = isDigital ? "3D модель" : "На заказ";
 
@@ -24,8 +27,13 @@ export default async function ProductPage({ params }: Params) {
 
       <div className="mt-6 grid gap-8 lg:grid-cols-2">
         <div className="studio-card overflow-hidden rounded-2xl">
-          <div className="studio-viewport aspect-square">
+          <div className="studio-viewport relative aspect-square">
             <div className="studio-viewport-shine" aria-hidden />
+            <ProductPreviewStats
+              stats={stats}
+              productType={product.type}
+              className="absolute bottom-3 right-3 z-[2]"
+            />
             <div className="relative z-[1] h-full w-full">
               {isDigital && product.previewGlbPath ? (
                 <ModelViewer
