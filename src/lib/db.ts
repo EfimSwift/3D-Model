@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaD1 } from "@prisma/adapter-d1";
-import { getCfEnv } from "@/lib/cloudflare/bindings";
+import { getCfEnv, isCloudflareWorkerRuntime } from "@/lib/cloudflare/bindings";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 
@@ -16,7 +16,7 @@ function createPrismaClient(): PrismaClient {
     });
   }
 
-  if (cf) {
+  if (isCloudflareWorkerRuntime()) {
     throw new Error("D1 binding DB is missing in Cloudflare env");
   }
 
@@ -32,7 +32,7 @@ function getPrismaClient(): PrismaClient {
 
 /**
  * Ленивая инициализация: на Workers D1 доступен только во время запроса
- * (getCloudflareContext), не при загрузке модуля.
+ * (AsyncLocalStorage в OpenNext), не при загрузке модуля.
  */
 export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
   get(_target, prop, receiver) {
