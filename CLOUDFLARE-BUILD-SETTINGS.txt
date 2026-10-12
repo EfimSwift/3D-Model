@@ -1,13 +1,28 @@
-ОШИБКА "Could not find compiled Open Next config" = в Build стоит npm run build.
+=== 1. Git (сначала!) ===
+На странице Builds: "disconnected from Git" → Connect / Reconnect GitHub
+Репозиторий: EfimSwift/3D-Model, ветка: main
 
-Cloudflare → Worker → Settings → Builds:
-
-Node.js: 22
+=== 2. Production (вкладка Production) ===
+Node.js version: 22
 
 Build command:
-  (ПУСТО — удалите npm run build полностью)
+  (оставь ПУСТЫМ — удали npm run build)
 
 Deploy command:
   npm run cf:workers-ci
 
-Save → Retry deployment
+Branch: main
+
+=== 3. Previews (вкладка Previews Base) — по желанию ===
+Non-production deploy command:
+  npm run cf:workers-ci
+
+или для preview env в wrangler:
+  npx opennextjs-cloudflare build && npx opennextjs-cloudflare deploy --env=preview
+
+=== 4. wrangler.jsonc ===
+В репо уже "name": "3d-model" — как просит Cloudflare.
+После push сделай Retry deployment.
+
+Секреты (SESSION_SECRET и т.д.) если сайт без логина — в Worker 3d-model
+заново: npx wrangler secret put SESSION_SECRET --env=""
