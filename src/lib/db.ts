@@ -1,23 +1,33 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaD1 } from "@prisma/adapter-d1";
-import { getCfEnv, isCloudflareWorkerRuntime } from "@/lib/cloudflare/bindings";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
+
+function isDeployedWorker(): boolean {
+  return (process.env.NEXT_PUBLIC_APP_URL ?? "").includes("workers.dev");
+}
 
 function createPrismaClient(): PrismaClient {
   const log =
     process.env.NODE_ENV === "development" ? (["error", "warn"] as const) : (["error"] as const);
 
-  const cf = getCfEnv();
-  if (cf?.DB) {
-    return new PrismaClient({
-      adapter: new PrismaD1(cf.DB),
-      log: [...log],
-    });
-  }
-
-  if (isCloudflareWorkerRuntime()) {
-    throw new Error("D1 binding DB is missing in Cloudflare env");
+  try {
+    const { env } = getCloudflareContext();
+    const d1 = env.DB;
+    if (d1) {
+      return new PrismaClient({
+        adapter: new PrismaD1(d1),
+        log: [...log],
+      });
+    }
+    if (isDeployedWorker()) {
+      throw new Error("Cloudflare D1 binding `DB` is not available in env");
+    }
+  } catch (e) {
+    if (isDeployedWorker()) {
+      throw e instanceof Error ? e : new Error(String(e));
+    }
   }
 
   return new PrismaClient({ log: [...log] });

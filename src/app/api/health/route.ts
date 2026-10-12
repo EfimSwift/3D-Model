@@ -1,16 +1,27 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const ready = url.searchParams.get("ready") === "1";
+  const debug = url.searchParams.get("debug") === "1";
 
   if (!ready) {
-    return NextResponse.json({
+    const payload: Record<string, unknown> = {
       status: "ok",
       service: "figurki-shop",
       ts: new Date().toISOString(),
-    });
+    };
+    if (debug) {
+      try {
+        const { env } = getCloudflareContext();
+        payload.cf = { hasDb: Boolean(env.DB), hasR2: Boolean(env.MODELS_BUCKET) };
+      } catch (e) {
+        payload.cf = { error: e instanceof Error ? e.message : String(e) };
+      }
+    }
+    return NextResponse.json(payload);
   }
 
   try {
