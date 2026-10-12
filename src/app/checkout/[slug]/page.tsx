@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CheckoutPayment } from "@/components/CheckoutPayment";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { formatUahFromDb } from "@/lib/format";
 import { isTestPaymentAllowed } from "@/lib/security/test-payment";
 
@@ -9,6 +9,7 @@ type Params = { params: Promise<{ slug: string }> };
 
 export default async function CheckoutPage({ params }: Params) {
   const { slug } = await params;
+  const prisma = getPrismaClient();
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product) notFound();
 

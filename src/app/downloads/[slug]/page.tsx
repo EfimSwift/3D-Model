@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DownloadPanel } from "@/components/DownloadPanel";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { canDownloadDigitalForOrder } from "@/lib/access";
 import { verifyOrderAccessToken } from "@/lib/order-access-token";
 
@@ -14,6 +14,7 @@ export default async function DownloadPage({ params, searchParams }: Params) {
   const { slug } = await params;
   const { access } = await searchParams;
 
+  const prisma = getPrismaClient();
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product || product.type !== "DIGITAL") notFound();
 

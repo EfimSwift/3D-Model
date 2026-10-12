@@ -1,5 +1,5 @@
 import { ProductType } from "@prisma/client";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { signOrderAccessToken } from "@/lib/order-access-token";
 
 function baseUrl() {
@@ -11,6 +11,7 @@ function baseUrl() {
  * Сейчас: лог в консоль (dev). Подключите SMTP / Resend / SendGrid через env.
  */
 export async function sendPurchaseNotification(orderId: string): Promise<void> {
+  const prisma = getPrismaClient();
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: { include: { product: true } } },

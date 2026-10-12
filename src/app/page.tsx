@@ -1,8 +1,9 @@
 import { ProductCard } from "@/components/ProductCard";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { getProductStatsMap } from "@/lib/product-stats";
 
 export default async function HomePage() {
+  const prisma = getPrismaClient();
   const products = await prisma.product.findMany({ orderBy: { createdAt: "asc" } });
   const statsMap = await getProductStatsMap(products.map((p) => p.id));
 

@@ -1,10 +1,11 @@
 import { OrderStatus } from "@prisma/client";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 
 export async function orderHasPaidProduct(
   orderId: string,
   productId: string,
 ): Promise<boolean> {
+  const prisma = getPrismaClient();
   const item = await prisma.orderItem.findFirst({
     where: {
       orderId,
@@ -19,6 +20,7 @@ export async function emailHasPaidProduct(
   email: string,
   productId: string,
 ): Promise<boolean> {
+  const prisma = getPrismaClient();
   const normalized = email.trim().toLowerCase();
   const item = await prisma.orderItem.findFirst({
     where: {

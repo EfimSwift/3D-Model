@@ -4,7 +4,7 @@ import { ModelViewer } from "@/components/ModelViewer";
 import { ProductPayButton } from "@/components/ProductPayButton";
 import { ProductShowcaseImage } from "@/components/ProductShowcaseImage";
 import { ProductPreviewStats } from "@/components/ProductPreviewStats";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { formatUahFromDb } from "@/lib/format";
 import { getProductStats } from "@/lib/product-stats";
 
@@ -12,6 +12,7 @@ type Params = { params: Promise<{ slug: string }> };
 
 export default async function ProductPage({ params }: Params) {
   const { slug } = await params;
+  const prisma = getPrismaClient();
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product) notFound();
 

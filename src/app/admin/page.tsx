@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { AdminOrderActions } from "@/components/AdminOrderActions";
 
@@ -9,6 +9,7 @@ export default async function AdminPage() {
     redirect("/staff/login");
   }
 
+  const prisma = getPrismaClient();
   const orders = await prisma.order.findMany({
     orderBy: { createdAt: "desc" },
     take: 50,

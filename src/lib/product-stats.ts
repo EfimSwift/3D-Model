@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 
 export type ProductStats = {
   purchaseCount: number;
@@ -16,6 +16,7 @@ export async function getProductStatsMap(
   }
   if (productIds.length === 0) return map;
 
+  const prisma = getPrismaClient();
   const [purchaseGroups, downloadGroups] = await Promise.all([
     prisma.orderItem.groupBy({
       by: ["productId"],

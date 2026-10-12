@@ -2,7 +2,7 @@ import path from "path";
 import { NextResponse } from "next/server";
 import { canDownloadDigitalForOrder } from "@/lib/access";
 import { readPrivateModelFile } from "@/lib/crypto/model-files";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { verifyDownloadToken } from "@/lib/download-token";
 
 export async function GET(request: Request) {
@@ -17,6 +17,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Ссылка истекла или недействительна" }, { status: 403 });
   }
 
+  const prisma = getPrismaClient();
   const grant = await prisma.downloadGrant.findUnique({
     where: { id: payload.grantId },
   });

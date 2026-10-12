@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 import { securityHeaders } from "./src/lib/security/headers";
 
 const nextConfig: NextConfig = {
+  /** Prisma + D1 на Workers — см. https://opennext.js.org/cloudflare/howtos/db */
+  serverExternalPackages: ["@prisma/client", ".prisma/client"],
   async headers() {
     const headers =
       process.env.NODE_ENV === "production"

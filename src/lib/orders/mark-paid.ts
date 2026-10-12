@@ -1,5 +1,5 @@
 import { OrderStatus } from "@prisma/client";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { onOrderPaid } from "@/lib/orders/notify-paid";
 
 export type MarkPaidMeta = {
@@ -12,6 +12,7 @@ export type MarkPaidMeta = {
  * Идемпотентна: повторный вызов с тем же заказом не ломает состояние.
  */
 export async function markOrderPaid(orderId: string, meta: MarkPaidMeta) {
+  const prisma = getPrismaClient();
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: true },

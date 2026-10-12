@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { checkRateLimit, clientIpFromRequest } from "@/lib/security/rate-limit";
 import { COOKIE_NAME, createSessionToken } from "@/lib/session";
 
@@ -22,6 +22,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Email и пароль обязательны" }, { status: 400 });
   }
 
+  const prisma = getPrismaClient();
   const user = await prisma.user.findUnique({ where: { email } });
   if (
     !user ||

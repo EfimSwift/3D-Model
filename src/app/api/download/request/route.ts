@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { canDownloadDigitalForOrder } from "@/lib/access";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { downloadGrantExpiresAt, signDownloadToken } from "@/lib/download-token";
 import { verifyOrderAccessToken } from "@/lib/order-access-token";
 import { checkRateLimit, clientIpFromRequest } from "@/lib/security/rate-limit";
@@ -41,6 +41,7 @@ export async function GET(request: Request) {
   const grantId = randomUUID();
   const expiresAt = downloadGrantExpiresAt();
 
+  const prisma = getPrismaClient();
   await prisma.downloadGrant.create({
     data: {
       id: grantId,

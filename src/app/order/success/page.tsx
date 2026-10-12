@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { signOrderAccessToken } from "@/lib/order-access-token";
 
 type Props = { searchParams: Promise<{ orderId?: string }> };
@@ -9,6 +9,7 @@ export default async function OrderSuccessPage({ searchParams }: Props) {
   const { orderId } = await searchParams;
   if (!orderId) notFound();
 
+  const prisma = getPrismaClient();
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: { include: { product: true } } },

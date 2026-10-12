@@ -1,6 +1,6 @@
 import { OrderStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 
 function normalizeEmail(raw: string) {
   return raw.trim().toLowerCase();
@@ -23,6 +23,7 @@ export async function POST(request: Request) {
   }
 
   const email = normalizeEmail(emailRaw);
+  const prisma = getPrismaClient();
   const product = await prisma.product.findUnique({ where: { id: productId } });
   if (!product) {
     return NextResponse.json({ error: "Товар не найден" }, { status: 404 });

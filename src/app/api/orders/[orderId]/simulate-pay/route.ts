@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { markOrderPaid } from "@/lib/orders/mark-paid";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 import { isTestPaymentAllowed } from "@/lib/security/test-payment";
 
 type Params = { params: Promise<{ orderId: string }> };
@@ -11,6 +11,7 @@ export async function POST(_request: Request, { params }: Params) {
   }
 
   const { orderId } = await params;
+  const prisma = getPrismaClient();
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) {
     return NextResponse.json({ error: "Заказ не найден" }, { status: 404 });

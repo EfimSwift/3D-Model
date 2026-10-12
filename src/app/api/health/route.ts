@@ -1,7 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
 import type { CfEnv } from "@/lib/cloudflare/bindings";
-import { prisma } from "@/lib/db";
+import { getPrismaClient } from "@/lib/db";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -27,6 +27,7 @@ export async function GET(request: Request) {
   }
 
   try {
+    const prisma = getPrismaClient();
     await prisma.$queryRaw`SELECT 1`;
     return NextResponse.json({ status: "ready", db: "ok" });
   } catch (e) {
