@@ -22,7 +22,7 @@ for (const file of files) {
   const local = path.join(dir, file);
   console.log(`Uploading ${file} → r2://${bucket}/${file}`);
   execSync(
-    `npx wrangler r2 object put ${bucket}/${file} --file="${local}"`,
+    `npx wrangler r2 object put ${bucket}/${file} --remote --file="${local}"`,
     { cwd: root, stdio: "inherit" },
   );
 }

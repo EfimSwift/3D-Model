@@ -19,7 +19,7 @@
     {
       "binding": "DB",
       "database_name": "figurki-3d-dev",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "d0b0a67f-1fd2-4fbf-b8fe-fa5578193ec4",
     },
   ],
   "r2_buckets": [
