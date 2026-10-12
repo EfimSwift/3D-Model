@@ -11,6 +11,7 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:setup": "prisma db push && prisma db seed",
+    "cf:bootstrap": "node scripts/cf-bootstrap.mjs",
     "cf:check": "node scripts/cf-check.mjs",
     "cf:db:schema": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script -o prisma/cloudflare-schema.sql",
     "cf:db:migrate:local": "wrangler d1 execute figurki-3d-dev --local --file=prisma/cloudflare-schema.sql",

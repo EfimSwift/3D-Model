@@ -57,7 +57,10 @@ npm run dev
 - **`SECURITY.md`** — модели, шифрование, доступ
 - **`docs/INFRASTRUCTURE.md`** — Docker/K8s, DDoS, разделение сервисов
 - **`docs/PAYMENTS-SECURITY.md`** — оплата, PCI, webhook
-- **`docs/CLOUDFLARE-DEV.md`** — деплой dev/preview на Cloudflare (OpenNext + D1 + R2)
+- **`docs/ZERO-BUDGET-HOSTING.md`** — хостинг за $0 (без Firebase Blaze)
+- **`docs/FIREBASE-DEPLOY.md`** — Firebase App Hosting (нужна карта / Blaze)
+- **`docs/CLOUDFLARE-GIT-DEPLOY.md`** — деплой через GitHub (пошагово)
+- **`docs/CLOUDFLARE-DEV.md`** — Cloudflare Workers (OpenNext + D1 + R2)
 
 Docker: `docker compose up --build` → сайт на http://localhost:8080
 

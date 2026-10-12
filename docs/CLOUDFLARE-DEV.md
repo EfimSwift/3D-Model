@@ -105,19 +105,19 @@ npm run cf:deploy -- --env preview
 
 ---
 
-## 6. Git → Cloudflare (dev branch)
+## 6. Git → Cloudflare (автодеплой)
 
-В [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages** → **Create** → **Connect Git**.
+**Пошагово:** см. **`docs/CLOUDFLARE-GIT-DEPLOY.md`**.
+
+Кратко:
 
 | Поле | Значение |
 |------|----------|
-| Build command | `npm run cf:build` |
-| Deploy command | `npx wrangler deploy` (или `npm run cf:deploy` в CI с `CLOUDFLARE_API_TOKEN`) |
+| Build command | `npm ci && npx opennextjs-cloudflare build` |
+| Deploy command | `npx opennextjs-cloudflare deploy` |
 | Node.js | 20+ |
 
-Добавьте в репозиторий секреты CI: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
-
-Для **preview deployments** включите ветки `develop` / PR и задайте переменные `ENABLE_TEST_PAYMENT=true` только на preview.
+Не заливайте папку вручную в браузер — только Git. `node_modules` не в репозитории; модели `.enc` — в **R2** отдельно.
 
 ---
 
