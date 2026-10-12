@@ -8,12 +8,16 @@ function createPrismaClient(): PrismaClient {
   const log =
     process.env.NODE_ENV === "development" ? (["error", "warn"] as const) : (["error"] as const);
 
-  const d1 = getCfEnv()?.DB;
-  if (d1) {
+  const cf = getCfEnv();
+  if (cf?.DB) {
     return new PrismaClient({
-      adapter: new PrismaD1(d1),
+      adapter: new PrismaD1(cf.DB),
       log: [...log],
     });
+  }
+
+  if (cf) {
+    throw new Error("D1 binding DB is missing in Cloudflare env");
   }
 
   return new PrismaClient({ log: [...log] });

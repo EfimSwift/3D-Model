@@ -35,6 +35,8 @@
     // },
   ],
   "vars": {
+    // Placeholder для Prisma schema; реальные запросы идут через D1 adapter
+    "DATABASE_URL": "file:./cloudflare-d1.sqlite",
     "NEXT_PUBLIC_APP_URL": "https://3d-model.a01871893.workers.dev",
     "ENABLE_TEST_PAYMENT": "true",
     "ALLOW_TEST_PAYMENT_IN_PRODUCTION": "false",
