@@ -16,6 +16,9 @@ const body = Outfit({
   subsets: ["latin", "latin-ext"],
 });
 
+/** На Cloudflare D1 нет БД на этапе `next build` — не пререндерим страницы с Prisma. */
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Figurki.studio — 3D модели и фигурки на заказ",
   description: "Цифровые модели для скачивания и авторские фигурки под заказ",
