@@ -1,0 +1,11 @@
+Cloudflare → Worker → Settings → Build
+
+Node.js version: 22
+
+Build command (можно ОЧИСТИТЬ / оставить пустым):
+  (сборка идёт внутри wrangler deploy через wrangler.jsonc → build.command)
+
+Deploy command:
+  npx wrangler deploy --env=""
+
+Сохранить → Retry deployment

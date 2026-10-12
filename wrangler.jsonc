@@ -4,6 +4,10 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-04-05",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // Запускается при `npx wrangler deploy` (Workers Git CI)
+  "build": {
+    "command": "npx opennextjs-cloudflare build",
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
