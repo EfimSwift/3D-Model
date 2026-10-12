@@ -1,5 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
+import type { CfEnv } from "@/lib/cloudflare/bindings";
 import { prisma } from "@/lib/db";
 
 export async function GET(request: Request) {
@@ -16,7 +17,8 @@ export async function GET(request: Request) {
     if (debug) {
       try {
         const { env } = getCloudflareContext();
-        payload.cf = { hasDb: Boolean(env.DB), hasR2: Boolean(env.MODELS_BUCKET) };
+        const cf = env as CfEnv;
+        payload.cf = { hasDb: Boolean(cf.DB), hasR2: Boolean(cf.MODELS_BUCKET) };
       } catch (e) {
         payload.cf = { error: e instanceof Error ? e.message : String(e) };
       }
