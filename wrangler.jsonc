@@ -4,10 +4,7 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-04-05",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  // Запускается при `npx wrangler deploy` (Workers Git CI)
-  "build": {
-    "command": "npx opennextjs-cloudflare build",
-  },
+  // OpenNext уже в `npm run cf:workers-ci` — не дублировать build здесь
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
@@ -38,7 +35,7 @@
     // },
   ],
   "vars": {
-    "NEXT_PUBLIC_APP_URL": "https://3d-model.workers.dev",
+    "NEXT_PUBLIC_APP_URL": "https://3d-model.a01871893.workers.dev",
     "ENABLE_TEST_PAYMENT": "true",
     "ALLOW_TEST_PAYMENT_IN_PRODUCTION": "false",
   },
